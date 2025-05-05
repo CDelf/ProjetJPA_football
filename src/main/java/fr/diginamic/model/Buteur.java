@@ -32,7 +32,7 @@ public class Buteur {
      * représentant les buts marqués par le buteur
      */
     @OneToMany(mappedBy = "buteur")
-    Set<But> buts;
+    private Set<But> buts;
 
     /**
      * Initialisation d'instance
@@ -111,5 +111,21 @@ public class Buteur {
      */
     public void setEquipe(Equipe equipe) {
         this.equipe = equipe;
+    }
+
+    /**
+     * Getter
+     * @return buts
+     */
+    public Set<But> getButs() {
+        return buts;
+    }
+
+    /**
+     * Setter
+     * @param buts buts
+     */
+    public void setButs(Set<But> buts) {
+        this.buts = buts;
     }
 }

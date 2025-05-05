@@ -50,7 +50,7 @@ public class Match {
      * pour représenter les buts marqués au cours d'un match
      */
     @OneToMany(mappedBy = "match")
-    Set<But> buts;
+    private Set<But> buts;
 
     /**
      * Relation OneToOne avec l'entité score
