@@ -72,6 +72,26 @@ public class Match {
     }
 
     /**
+     * Constructeur complet pour créer une instance de Match
+     * @param date date du match
+     * @param ville ville où se joue le match
+     * @param pays pays où se joue le match
+     * @param lieuNeutre vrai si le lieu est neutre
+     * @param tournoi nom du tournoi
+     * @param equipeHote équipe hôte
+     * @param equipeInvitee équipe invitée
+     */
+    public Match(LocalDate date, String ville, String pays, boolean lieuNeutre, String tournoi, Equipe equipeHote, Equipe equipeInvitee) {
+        this.date = date;
+        this.ville = ville;
+        this.pays = pays;
+        this.lieuNeutre = lieuNeutre;
+        this.tournoi = tournoi;
+        this.equipeHote = equipeHote;
+        this.equipeInvitee = equipeInvitee;
+    }
+
+    /**
      * Optimise l'affichage des attributs de l'instance
      * @return les attributs de l'instance.
      */

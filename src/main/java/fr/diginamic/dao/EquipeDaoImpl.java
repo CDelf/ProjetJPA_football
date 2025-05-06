@@ -42,18 +42,14 @@ public class EquipeDaoImpl implements GenericDao<Equipe> {
     }
 
     /**
-     * Méthode retournant une liste d'équipes selon plusieurs attributs
-     * @param nom désigne le nom de l'équipe
-     * @param nbMatchsHote désigne le nombre de matchs joués à domicile
-     * @param nbMatchsInv désigne le nombre de matchs joués à l'extérieur
-     * @return la liste des matchs ayant ces critères en commun
+     * Méthode permettant de récupérer une liste d'équipes ayant le même nom
+     * @param nom nom d'équipe à rechercher
+     * @return la liste d'équipes ayant le même nom
      */
-    public List<Equipe> findByNameAndNbMatchs(String nom, int nbMatchsHote, int nbMatchsInv) {
+    public List<Equipe> findByName(String nom) {
         return em.createQuery(
-                "SELECT e FROM Equipe e WHERE e.nom = :nom AND SIZE(e.matchsHote) = :nbMatchsHote AND SIZE(e.matchsInvitee) = :nbMatchsInv", Equipe.class)
+                        "SELECT e FROM Equipe e WHERE e.nom = :nom", Equipe.class)
                 .setParameter("nom", nom)
-                .setParameter("nbMatchsHote",nbMatchsHote)
-                .setParameter("nbMatchsInv", nbMatchsInv)
                 .getResultList();
     }
 

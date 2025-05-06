@@ -43,14 +43,12 @@ public class ButeurDaoImpl implements GenericDao<Buteur> {
      * Méthode permettant de récupérer la liste des buteurs selon plusieurs attributs
      * @param nom désigne le nom du buteur
      * @param equipeId désigne l'id de son équipe
-     * @param nbButs désigne le nombre de buts qu'il a marqué
      * @return la liste des buteurs respectant ces critères
      */
-    public List<Buteur> findByNomEquipeAndNbButs(String nom, int equipeId, int nbButs) {
-        return em.createQuery("SELECT b FROM Buteur b WHERE b.nom = :nom AND b.equipe.id = :equipeId AND SIZE(b.buts) = :nbButs", Buteur.class)
+    public List<Buteur> findByNomEquipeAndNbButs(String nom, int equipeId) {
+        return em.createQuery("SELECT b FROM Buteur b WHERE b.nom = :nom AND b.equipe.id = :equipeId", Buteur.class)
                 .setParameter("nom", nom)
                 .setParameter("equipeId", equipeId)
-                .setParameter("nbButs", nbButs)
                 .getResultList();
     }
 
