@@ -22,7 +22,7 @@ public class TirsButs {
      * pour définir quelle équipe commence le tir aux buts
      */
     @ManyToOne
-    @JoinColumn(name = "equipe_commence_id")
+    @JoinColumn(name = "equipe_commence_id", nullable = true)
     private Equipe equipeCommence;
 
     /**

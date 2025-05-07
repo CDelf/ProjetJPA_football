@@ -28,6 +28,18 @@ public class MatchService {
     }
 
     /**
+     * Récupère un match par sa date et ses équipes pour l'import
+     * @param date date du match
+     * @param hote équipe qui reçoit le match
+     * @param invitee équipe qui rejoint le match
+     * @return l'instance de Match correspondante
+     */
+    public Match getByDateAndEquipes(LocalDate date, Equipe hote, Equipe invitee) {
+        List<Match> matchs = matchDao.findByDateAndEquipes(date, hote.getId(), invitee.getId());
+        return matchs.size() == 1 ? matchs.get(0) : null;
+    }
+
+    /**
      * Insère un match s'il n'existe pas déjà en base.
      * En cas de doublon, une erreur est loguée.
      * @param date date du match

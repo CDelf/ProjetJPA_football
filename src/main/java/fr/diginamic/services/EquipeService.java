@@ -26,6 +26,16 @@ public class EquipeService {
     }
 
     /**
+     * Récupère une équipe par son nom lors de l'import
+     * @param nom désigne le nom de l'équipe à rechercher
+     * @return l'instance correspondante 
+     */
+    public Equipe getByNom(String nom) {
+        List<Equipe> equipes = equipeDao.findByName(nom);
+        return equipes.size() == 1 ? equipes.get(0) : null;
+    }
+
+    /**
      * Vérifie si une équipe de ce nom existe en base :
      * Si aucune trouvée, elle est créée et insérée.
      * Si plusieurs trouvées, une erreur est loguée.

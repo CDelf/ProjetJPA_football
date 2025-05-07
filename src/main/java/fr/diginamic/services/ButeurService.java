@@ -27,6 +27,17 @@ public class ButeurService {
     }
 
     /**
+     * Récupère un buteur par son nom et son équipe pour l'import
+     * @param nom nom du buteur
+     * @param equipe équipe du buteur
+     * @return l'instance correspondante
+     */
+    public Buteur getByNomAndEquipe(String nom, Equipe equipe){
+        List<Buteur> buteurs = buteurDao.findByNomAndEquipe(nom, equipe.getId());
+        return buteurs.size() == 1 ? buteurs.get(0) : null;
+    }
+
+    /**
      * Insère un buteur s'il n'existe pas déjà en base.
      * En cas de doublon, une erreur est loguée.
      * @param nom désigne le nom du buteur
@@ -39,7 +50,7 @@ public class ButeurService {
     ) {
         try {
             if(CheckUtils.isValidString(nom) && CheckUtils.isNotNull(equipe)) {
-                List<Buteur> resultats = buteurDao.findByNomEquipeAndNbButs(nom, equipe.getId());
+                List<Buteur> resultats = buteurDao.findByNomAndEquipe(nom, equipe.getId());
                 if(resultats.isEmpty()){
                     Buteur buteur = new Buteur(nom, equipe);
                     buteurDao.insert(buteur);
