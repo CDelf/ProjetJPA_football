@@ -1,11 +1,11 @@
 package fr.diginamic.services;
 
 import fr.diginamic.dao.ButDaoImpl;
-import fr.diginamic.dao.ErreurImportDaoImpl;
 import fr.diginamic.model.But;
 import fr.diginamic.model.Buteur;
 import fr.diginamic.model.Match;
 import fr.diginamic.utils.CheckUtils;
+import fr.diginamic.utils.ErreurCollector;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
@@ -16,15 +16,15 @@ import java.util.List;
 public class ButService {
 
     private final ButDaoImpl butDao;
-    private final ErreurImportDaoImpl erreurDao;
+    private final ErreurCollector erreurCollector;
 
     /**
      * Initialise le service avec un EntityManager
      * @param em EntityManager à utiliser
      */
-    public ButService(EntityManager em) {
+    public ButService(EntityManager em, ErreurCollector collector) {
         this.butDao = new ButDaoImpl(em);
-        this.erreurDao = new ErreurImportDaoImpl(em);
+        this.erreurCollector = collector;
     }
 
     /**
@@ -52,15 +52,15 @@ public class ButService {
                     But but = new But(minute, csc, penalty, match, buteur);
                     butDao.insert(but);
                 } else if (resultats.size() > 1) {
-                    erreurDao.logErreur(fichier, ligne,
+                    erreurCollector.log(fichier, ligne,
                             "Doublon : plusieurs buts trouvés pour ce minutage, match et buteur", "But");
                 }
             } else {
-                erreurDao.logErreur(fichier, ligne,
+                erreurCollector.log(fichier, ligne,
                         "Paramètres invalides : match ou buteur null, ou minute négatif", "But");
             }
         } catch (Exception e) {
-            erreurDao.logErreur(fichier, ligne, e.getMessage(), "But");
+            erreurCollector.log(fichier, ligne, e.getMessage(), "But");
         }
     }
 }

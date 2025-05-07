@@ -3,6 +3,7 @@ package fr.diginamic;
 import fr.diginamic.imports.GoalsScorersCsvImporter;
 import fr.diginamic.imports.ResultCsvImporter;
 import fr.diginamic.imports.ShootoutsCsvImporter;
+import fr.diginamic.utils.ErreurCollector;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -17,6 +18,7 @@ public class Main {
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("jpa-football");
         EntityManager em = emf.createEntityManager();
+        ErreurCollector collector = new ErreurCollector();
 
         long startTime = System.currentTimeMillis();
 
@@ -24,14 +26,15 @@ public class Main {
             em.getTransaction().begin();
 
             System.out.println("Import : results.csv");
-            new ResultCsvImporter(em).importer("src/main/resources/results.csv");
+            new ResultCsvImporter(em, collector).importer("results.csv");
 
             System.out.println("Import : goalscorers.csv");
-            new GoalsScorersCsvImporter(em).importer("src/main/resources/goalscorers.csv");
+            new GoalsScorersCsvImporter(em, collector).importer("goalscorers.csv");
 
             System.out.println("Import : shootouts.csv");
-            new ShootoutsCsvImporter(em).importer("src/main/resources/shootouts.csv");
+            new ShootoutsCsvImporter(em, collector).importer("shootouts.csv");
 
+            collector.getErreurs().forEach(em::persist);
             em.getTransaction().commit();
 
             System.out.println("Import terminé avec succès.");
@@ -46,5 +49,6 @@ public class Main {
 
         long endTime = System.currentTimeMillis();
         System.out.println("Durée totale : " + (endTime - startTime) + " ms");
+        System.out.println("Nombre d’erreurs collectées : " + collector.getErreurs().size());
     }
 }

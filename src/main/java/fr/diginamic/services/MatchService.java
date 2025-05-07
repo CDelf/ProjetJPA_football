@@ -1,10 +1,10 @@
 package fr.diginamic.services;
 
-import fr.diginamic.dao.ErreurImportDaoImpl;
 import fr.diginamic.dao.MatchDaoImpl;
 import fr.diginamic.model.Equipe;
 import fr.diginamic.model.Match;
 import fr.diginamic.utils.CheckUtils;
+import fr.diginamic.utils.ErreurCollector;
 import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
@@ -16,15 +16,15 @@ import java.util.List;
 public class MatchService {
 
     private final MatchDaoImpl matchDao;
-    private final ErreurImportDaoImpl erreurDao;
+    private final ErreurCollector erreurCollector;
 
     /**
      * Initialise le service avec les DAO nécessaires.
      * @param em EntityManager partagé
      */
-    public MatchService(EntityManager em) {
+    public MatchService(EntityManager em, ErreurCollector collector) {
         this.matchDao = new MatchDaoImpl(em);
-        this.erreurDao = new ErreurImportDaoImpl(em);
+        this.erreurCollector = collector;
     }
 
     /**
@@ -65,15 +65,15 @@ public class MatchService {
                     Match match = new Match(date, ville, pays, lieuNeutre, tournoi, equipeHote, equipeInvitee);
                     matchDao.insert(match);
                 } else if (resultats.size() > 1) {
-                    erreurDao.logErreur(fichier, ligne,
+                    erreurCollector.log(fichier, ligne,
                             "Doublon : plusieurs matchs trouvés pour cette date et ces équipes", "Match");
                 }
             } else {
-                erreurDao.logErreur(fichier, ligne,
+                erreurCollector.log(fichier, ligne,
                         "Erreur dans les paramètres : date invalide ou équipe hôte/invitée absente", "Match");
             }
         } catch (Exception e) {
-            erreurDao.logErreur(fichier, ligne, e.getMessage(), "Match");
+            erreurCollector.log(fichier, ligne, e.getMessage(), "Match");
         }
     }
 }

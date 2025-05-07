@@ -1,6 +1,5 @@
 package fr.diginamic.imports;
 
-import fr.diginamic.model.But;
 import fr.diginamic.model.Buteur;
 import fr.diginamic.model.Equipe;
 import fr.diginamic.model.Match;
@@ -11,6 +10,7 @@ import fr.diginamic.services.MatchService;
 import fr.diginamic.utils.CheckUtils;
 import fr.diginamic.utils.CsvImporter;
 import fr.diginamic.utils.DateUtils;
+import fr.diginamic.utils.ErreurCollector;
 import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
@@ -25,16 +25,18 @@ public class GoalsScorersCsvImporter {
     private final MatchService matchService;
     private final ButeurService buteurService;
     private final ButService butService;
+    private final ErreurCollector collector;
 
     /**
      * Initialise les services des entités concernées par l'import.
      * @param em EntityManager partagé
      */
-    public GoalsScorersCsvImporter(EntityManager em) {
-        this.equipeService = new EquipeService(em);
-        this.matchService = new MatchService(em);
-        this.buteurService = new ButeurService(em);
-        this.butService = new ButService(em);
+    public GoalsScorersCsvImporter(EntityManager em, ErreurCollector collector) {
+        this.equipeService = new EquipeService(em, collector);
+        this.matchService = new MatchService(em, collector);
+        this.buteurService = new ButeurService(em, collector);
+        this.butService = new ButService(em, collector);
+        this.collector = collector;
     }
 
     /**
@@ -85,6 +87,7 @@ public class GoalsScorersCsvImporter {
             } catch (Exception e) {
                 System.err.println("Erreur de parsing ligne: " + ligne);
                 e.printStackTrace();
+                collector.log("goalsscorers.csv", ligne, e.getMessage(), "GoalScorer");
             }
         });
     }

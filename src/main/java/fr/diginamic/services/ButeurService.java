@@ -1,10 +1,10 @@
 package fr.diginamic.services;
 
 import fr.diginamic.dao.ButeurDaoImpl;
-import fr.diginamic.dao.ErreurImportDaoImpl;
 import fr.diginamic.model.Buteur;
 import fr.diginamic.model.Equipe;
 import fr.diginamic.utils.CheckUtils;
+import fr.diginamic.utils.ErreurCollector;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
@@ -15,15 +15,15 @@ import java.util.List;
 public class ButeurService {
 
     private final ButeurDaoImpl buteurDao;
-    private final ErreurImportDaoImpl erreurDao;
+    private final ErreurCollector erreurCollector;
 
     /**
      * Initialise le service avec un EntityManager
      * @param em EntityManager à utiliser
      */
-    public ButeurService(EntityManager em) {
+    public ButeurService(EntityManager em, ErreurCollector collector) {
         this.buteurDao = new ButeurDaoImpl(em);
-        this.erreurDao = new ErreurImportDaoImpl(em);
+        this.erreurCollector = collector;
     }
 
     /**
@@ -55,15 +55,15 @@ public class ButeurService {
                     Buteur buteur = new Buteur(nom, equipe);
                     buteurDao.insert(buteur);
                 } else if(resultats.size() > 1 ) {
-                    erreurDao.logErreur(fichier, ligne,
+                    erreurCollector.log(fichier, ligne,
                             "Doublon : plusieurs buteurs trouvés pour ce nom et équipe", "Buteur");
                 }
             } else {
-                erreurDao.logErreur(fichier, ligne,
+                erreurCollector.log(fichier, ligne,
                         "Erreur dans la recherche: nom vide/invalide ou équipe null", "Buteur");
             }
         } catch (Exception e) {
-            erreurDao.logErreur(fichier, ligne, e.getMessage(), "Buteur");
+            erreurCollector.log(fichier, ligne, e.getMessage(), "Buteur");
         }
     }
 }

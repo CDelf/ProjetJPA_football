@@ -26,7 +26,7 @@ public class TirsButs {
     private Equipe equipeCommence;
 
     /**
-     * Relation ManyToOneavec Equipe
+     * Relation ManyToOne avec Equipe
      * pour définir quelle équipe gagne au tir aux buts
      */
     @ManyToOne

@@ -8,6 +8,7 @@ import fr.diginamic.services.ScoreService;
 import fr.diginamic.utils.CheckUtils;
 import fr.diginamic.utils.CsvImporter;
 import fr.diginamic.utils.DateUtils;
+import fr.diginamic.utils.ErreurCollector;
 import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
@@ -21,15 +22,17 @@ public class ResultCsvImporter {
     private final EquipeService equipeService;
     private final MatchService matchService;
     private final ScoreService scoreService;
+    private final ErreurCollector collector;
 
     /**
      * Initialise les services des entités concernées par l'import.
      * @param em EntityManager partagé
      */
-    public ResultCsvImporter(EntityManager em) {
-        this.equipeService = new EquipeService(em);
-        this.matchService = new MatchService(em);
-        this.scoreService = new ScoreService(em);
+    public ResultCsvImporter(EntityManager em, ErreurCollector collector) {
+        this.equipeService = new EquipeService(em, collector);
+        this.matchService = new MatchService(em, collector);
+        this.scoreService = new ScoreService(em, collector);
+        this.collector = collector;
     }
 
     /**
@@ -82,6 +85,7 @@ public class ResultCsvImporter {
             } catch (Exception e) {
                 System.err.println("Erreur de parsing ligne: " + ligne);
                 e.printStackTrace();
+                collector.log("results.csv", ligne, e.getMessage(), "Results");
             }
         });
     }

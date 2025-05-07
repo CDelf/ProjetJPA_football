@@ -1,9 +1,9 @@
 package fr.diginamic.services;
 
 import fr.diginamic.dao.EquipeDaoImpl;
-import fr.diginamic.dao.ErreurImportDaoImpl;
 import fr.diginamic.model.Equipe;
 import fr.diginamic.utils.CheckUtils;
+import fr.diginamic.utils.ErreurCollector;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
@@ -14,15 +14,15 @@ import java.util.List;
 public class EquipeService {
 
     private final EquipeDaoImpl equipeDao;
-    private final ErreurImportDaoImpl erreurDao;
+    private final ErreurCollector erreurCollector;
 
     /**
      * Initialise le service avec un EntityManager
      * @param em EntityManager à utiliser
      */
-    public EquipeService(EntityManager em) {
+    public EquipeService(EntityManager em, ErreurCollector collector) {
         this.equipeDao = new EquipeDaoImpl(em);
-        this.erreurDao = new ErreurImportDaoImpl(em);
+        this.erreurCollector = collector;
     }
 
     /**
@@ -53,19 +53,19 @@ public class EquipeService {
                 if (resultats.isEmpty()) {
                     equipeDao.insert(new Equipe(nom));
                 } else if (resultats.size() > 1) {
-                    erreurDao.logErreur(
+                    erreurCollector.log(
                             fichier,
                             ligne,
                             "Doublon : plusieurs équipes portent le nom '" + nom + "'",
                             "Equipe");
                 }
             } else {
-                erreurDao.logErreur(fichier, ligne,
+                erreurCollector.log(fichier, ligne,
                         "Le nom de l'équipe est vide ou invalide.", "Equipe"
                 );
             }
         } catch (Exception e) {
-            erreurDao.logErreur(fichier, ligne, e.getMessage(), "Equipe");
+            erreurCollector.log(fichier, ligne, e.getMessage(), "Equipe");
         }
     }
 }

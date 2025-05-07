@@ -1,10 +1,10 @@
 package fr.diginamic.services;
 
-import fr.diginamic.dao.ErreurImportDaoImpl;
 import fr.diginamic.dao.ScoreDaoImpl;
 import fr.diginamic.model.Match;
 import fr.diginamic.model.Score;
 import fr.diginamic.utils.CheckUtils;
+import fr.diginamic.utils.ErreurCollector;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
@@ -15,15 +15,15 @@ import java.util.List;
 public class ScoreService {
 
     final private ScoreDaoImpl scoreDao;
-    final private ErreurImportDaoImpl erreurDao;
+    final private ErreurCollector erreurCollector;
 
     /**
      * Initialise le service avec un EntityManager
      * @param em EntityManager à utiliser
      */
-    public ScoreService(EntityManager em) {
+    public ScoreService(EntityManager em, ErreurCollector collector) {
         this.scoreDao = new ScoreDaoImpl(em);
-        this.erreurDao = new ErreurImportDaoImpl(em);
+        this.erreurCollector = collector;
     }
 
     /**
@@ -45,15 +45,15 @@ public class ScoreService {
                     Score score = new Score(match, scoreHote, scoreInvite);
                     scoreDao.insert(score);
                 } else if(resultats.size() > 1) {
-                    erreurDao.logErreur(fichier, ligne,
+                    erreurCollector.log(fichier, ligne,
                             "Doublon : plusieurs scores trouvés pour ce match et ces résultats", "Score");
                 }
             } else {
-                erreurDao.logErreur(fichier, ligne,
+                erreurCollector.log(fichier, ligne,
                         "Erreur dans la recherche: match null ou scores invalides", "Score");
             }
         } catch (Exception e) {
-            erreurDao.logErreur(fichier, ligne, e.getMessage(), "Score");
+            erreurCollector.log(fichier, ligne, e.getMessage(), "Score");
         }
     }
 }

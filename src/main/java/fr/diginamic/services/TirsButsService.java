@@ -1,11 +1,11 @@
 package fr.diginamic.services;
 
-import fr.diginamic.dao.ErreurImportDaoImpl;
 import fr.diginamic.dao.TirsButsDaoImpl;
 import fr.diginamic.model.Equipe;
 import fr.diginamic.model.Match;
 import fr.diginamic.model.TirsButs;
 import fr.diginamic.utils.CheckUtils;
+import fr.diginamic.utils.ErreurCollector;
 import jakarta.persistence.EntityManager;
 
 import java.util.List;
@@ -16,15 +16,15 @@ import java.util.List;
 public class TirsButsService {
 
     private final TirsButsDaoImpl tirsDao;
-    private final ErreurImportDaoImpl erreurDao;
+    private final ErreurCollector erreurCollector;
 
     /**
      * Initialise le service avec un EntityManager
      * @param em EntityManager à utiliser
      */
-    public TirsButsService(EntityManager em) {
+    public TirsButsService(EntityManager em, ErreurCollector collector) {
         this.tirsDao = new TirsButsDaoImpl(em);
-        this.erreurDao = new ErreurImportDaoImpl(em);
+        this.erreurCollector = collector;
     }
 
     /**
@@ -40,23 +40,23 @@ public class TirsButsService {
             Match match, Equipe equipeCommence, Equipe vainqueur, String ligne, String fichier
     ) {
         try {
-            if(CheckUtils.isNotNull(match) && CheckUtils.isNotNull(equipeCommence) && CheckUtils.isNotNull(vainqueur)) {
-                List<TirsButs> resultats = tirsDao.findByMatchAndEquipes(
-                        match.getId(), equipeCommence.getId(), vainqueur.getId()
+            if(CheckUtils.isNotNull(match) && CheckUtils.isNotNull(vainqueur)) {
+                List<TirsButs> resultats = tirsDao.findByMatchAndVainqueur(
+                        match.getId(), vainqueur.getId()
                 );
                 if(resultats.isEmpty()) {
                     TirsButs tirsButs = new TirsButs(match, equipeCommence, vainqueur);
                     tirsDao.insert(tirsButs);
                 } else if(resultats.size() > 1) {
-                    erreurDao.logErreur(fichier, ligne,
+                    erreurCollector.log(fichier, ligne,
                             "Doublon : plusieurs tirs aux buts trouvés pour ce match et équipes", "TirsButs");
                 }
             } else {
-                erreurDao.logErreur(fichier, ligne,
+                erreurCollector.log(fichier, ligne,
                         "Erreur dans la recherche: match ou équipe null","TirsButs");
             }
         } catch (Exception e) {
-            erreurDao.logErreur(fichier, ligne, e.getMessage(), "TirsButs");
+            erreurCollector.log(fichier, ligne, e.getMessage(), "TirsButs");
         }
     }
 }

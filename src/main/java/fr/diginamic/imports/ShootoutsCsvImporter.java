@@ -8,6 +8,7 @@ import fr.diginamic.services.TirsButsService;
 import fr.diginamic.utils.CheckUtils;
 import fr.diginamic.utils.CsvImporter;
 import fr.diginamic.utils.DateUtils;
+import fr.diginamic.utils.ErreurCollector;
 import jakarta.persistence.EntityManager;
 
 import java.time.LocalDate;
@@ -21,15 +22,17 @@ public class ShootoutsCsvImporter {
     private final EquipeService equipeService;
     private final MatchService matchService;
     private final TirsButsService tirsButsService;
+    private final ErreurCollector collector;
 
     /**
      * Initialise les services des entités concernées par l'import.
      * @param em EntityManager partagé
      */
-    public ShootoutsCsvImporter(EntityManager em) {
-        this.equipeService = new EquipeService(em);
-        this.matchService = new MatchService(em);
-        this.tirsButsService = new TirsButsService(em);
+    public ShootoutsCsvImporter(EntityManager em, ErreurCollector collector) {
+        this.equipeService = new EquipeService(em, collector);
+        this.matchService = new MatchService(em, collector);
+        this.tirsButsService = new TirsButsService(em, collector);
+        this.collector = collector;
     }
 
     /**
@@ -42,7 +45,7 @@ public class ShootoutsCsvImporter {
             try{
                 String[] tokens = ligne.split(",");
 
-                if (tokens.length < 5) {
+                if (tokens.length < 4) {
                     throw new IllegalArgumentException("Ligne incomplète : " + ligne);
                 }
 
@@ -50,7 +53,7 @@ public class ShootoutsCsvImporter {
                 String homeTeam = tokens[1].trim();
                 String awayTeam = tokens[2].trim();
                 String winner = tokens[3].trim();
-                String firstShooter = tokens[4].trim();
+                String firstShooter = tokens.length > 4 ? tokens[4].trim() : "";
 
                 // Format date correspondant au csv
                 LocalDate date = LocalDate.parse(dateStr, DateUtils.CSV_DATE_FORMATTER);
@@ -65,12 +68,15 @@ public class ShootoutsCsvImporter {
                 Equipe vainqueur = equipeService.getByNom(winner);
 
                 // Si match et vainqueur existants, y associer les tirs aux buts
-               if(CheckUtils.isNotNull(match) && CheckUtils.isNotNull(vainqueur)){
+                if (match == null) System.out.println("Match introuvable pour ligne : " + ligne);
+                if (vainqueur == null) System.out.println("Vainqueur introuvable : " + winner);
+                if(CheckUtils.isNotNull(match) && CheckUtils.isNotNull(vainqueur)){
                    tirsButsService.enregistrerTirsButsSiNouveau(match, equipeCommence, vainqueur, ligne, fichier);
                }
             } catch (Exception e){
                 System.err.println("Erreur de parsing ligne: " + ligne);
                 e.printStackTrace();
+                collector.log("shootouts.csv", ligne, e.getMessage(), "Shootouts");
             }
         });
     }

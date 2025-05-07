@@ -42,15 +42,13 @@ public class TirsButsDaoImpl implements GenericDao<TirsButs> {
     /**
      * Méthode permettant de récupérer la liste des tirs aux buts selon plusieurs attributs
      * @param matchId désigne l'id du match à l'origine des tirs aux buts
-     * @param equipeCommenceId désigne l'id de l'équipe qui commence la séance
      * @param vainqueurId désigne l'id du vainqueur
      * @return la liste des tirs aux buts répondant à ces critères
      */
-    public List<TirsButs> findByMatchAndEquipes(int matchId, int equipeCommenceId, int vainqueurId) {
+    public List<TirsButs> findByMatchAndVainqueur(int matchId, int vainqueurId) {
         return em.createQuery(
-                "SELECT t FROM TirsButs t WHERE t.match.id = :matchId AND t.equipeCommence.id = :equipeCommenceId AND t.vainqueur.id = :vainqueurId", TirsButs.class)
+                "SELECT t FROM TirsButs t WHERE t.match.id = :matchId AND t.vainqueur.id = :vainqueurId", TirsButs.class)
                 .setParameter("matchId", matchId)
-                .setParameter("equipeCommenceId", equipeCommenceId)
                 .setParameter("vainqueurId", vainqueurId)
                 .getResultList();
     }
