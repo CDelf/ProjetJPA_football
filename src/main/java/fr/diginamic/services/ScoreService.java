@@ -14,8 +14,8 @@ import java.util.List;
  */
 public class ScoreService {
 
-    final private ScoreDaoImpl scoreDao;
-    final private ErreurCollector erreurCollector;
+    private ScoreDaoImpl scoreDao;
+    private final ErreurCollector erreurCollector;
 
     /**
      * Initialise le service avec un EntityManager
@@ -55,5 +55,13 @@ public class ScoreService {
         } catch (Exception e) {
             erreurCollector.log(fichier, ligne, e.getMessage(), "Score");
         }
+    }
+
+    /**
+     * Setter
+     * @param scoreDao scoreDao, utilisé pour les tests
+     */
+    public void setScoreDao(ScoreDaoImpl scoreDao) {
+        this.scoreDao = scoreDao;
     }
 }

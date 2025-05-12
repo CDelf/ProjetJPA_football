@@ -82,6 +82,14 @@ public class Buteur {
     }
 
     /**
+     * Setter
+     * @param id id, utilisés pour les tests
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    /**
      * Getter
      * @return nom du buteur
      */

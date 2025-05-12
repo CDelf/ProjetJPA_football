@@ -120,6 +120,14 @@ public class Match {
     }
 
     /**
+     * Setter
+     * @param id id, utilisé pour les tests
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    /**
      * Getter
      * @return date du match
      */

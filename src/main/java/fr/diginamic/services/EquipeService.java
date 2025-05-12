@@ -13,8 +13,8 @@ import java.util.List;
  */
 public class EquipeService {
 
-    private final EquipeDaoImpl equipeDao;
-    private final ErreurCollector erreurCollector;
+    private EquipeDaoImpl equipeDao;
+    private final ErreurCollector collector;
 
     /**
      * Initialise le service avec un EntityManager
@@ -22,7 +22,7 @@ public class EquipeService {
      */
     public EquipeService(EntityManager em, ErreurCollector collector) {
         this.equipeDao = new EquipeDaoImpl(em);
-        this.erreurCollector = collector;
+        this.collector = collector;
     }
 
     /**
@@ -53,19 +53,27 @@ public class EquipeService {
                 if (resultats.isEmpty()) {
                     equipeDao.insert(new Equipe(nom));
                 } else if (resultats.size() > 1) {
-                    erreurCollector.log(
+                    collector.log(
                             fichier,
                             ligne,
                             "Doublon : plusieurs équipes portent le nom '" + nom + "'",
                             "Equipe");
                 }
             } else {
-                erreurCollector.log(fichier, ligne,
+                collector.log(fichier, ligne,
                         "Le nom de l'équipe est vide ou invalide.", "Equipe"
                 );
             }
         } catch (Exception e) {
-            erreurCollector.log(fichier, ligne, e.getMessage(), "Equipe");
+            collector.log(fichier, ligne, e.getMessage(), "Equipe");
         }
+    }
+
+    /**
+     * Setter
+     * @param equipeDao equipeDao, utilisé pour les tests
+     */
+    public void setEquipeDao(EquipeDaoImpl equipeDao) {
+        this.equipeDao = equipeDao;
     }
 }

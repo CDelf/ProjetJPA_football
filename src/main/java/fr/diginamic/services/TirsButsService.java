@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class TirsButsService {
 
-    private final TirsButsDaoImpl tirsDao;
+    private TirsButsDaoImpl tirsDao;
     private final ErreurCollector erreurCollector;
 
     /**
@@ -53,10 +53,18 @@ public class TirsButsService {
                 }
             } else {
                 erreurCollector.log(fichier, ligne,
-                        "Erreur dans la recherche: match ou équipe null","TirsButs");
+                        "Erreur dans la recherche: match ou vainqueur null","TirsButs");
             }
         } catch (Exception e) {
             erreurCollector.log(fichier, ligne, e.getMessage(), "TirsButs");
         }
+    }
+
+    /**
+     * Setter
+     * @param tirsDao tirsDao, utilisé pour les tests
+     */
+    public void setTirsDao(TirsButsDaoImpl tirsDao) {
+        this.tirsDao = tirsDao;
     }
 }

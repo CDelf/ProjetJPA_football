@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class MatchService {
 
-    private final MatchDaoImpl matchDao;
+    private MatchDaoImpl matchDao;
     private final ErreurCollector erreurCollector;
 
     /**
@@ -75,5 +75,13 @@ public class MatchService {
         } catch (Exception e) {
             erreurCollector.log(fichier, ligne, e.getMessage(), "Match");
         }
+    }
+
+    /**
+     * Setter
+     * @param matchDao matchDao, utilisé pour les tests
+     */
+    public void setMatchDao(MatchDaoImpl matchDao) {
+        this.matchDao = matchDao;
     }
 }

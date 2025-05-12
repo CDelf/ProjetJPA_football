@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class ButeurService {
 
-    private final ButeurDaoImpl buteurDao;
+    private ButeurDaoImpl buteurDao;
     private final ErreurCollector erreurCollector;
 
     /**
@@ -65,5 +65,13 @@ public class ButeurService {
         } catch (Exception e) {
             erreurCollector.log(fichier, ligne, e.getMessage(), "Buteur");
         }
+    }
+
+    /**
+     * Setter
+     * @param buteurDao buteurDao, utilisé pour les tests
+     */
+    public void setButeurDao(ButeurDaoImpl buteurDao) {
+        this.buteurDao = buteurDao;
     }
 }

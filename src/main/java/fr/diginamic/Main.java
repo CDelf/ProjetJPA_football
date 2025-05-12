@@ -8,12 +8,11 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
+/**
+ * Classe principale qui gère l'import des fichiers csv issus de resources dans l'ordre
+ */
 public class Main {
 
-    /**
-     * Classe principale qui gère l'import des fichiers csv issus de resources dans l'ordre
-     * @param args contenu de la classe main
-     */
     public static void main(String[] args) {
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("jpa-football");
@@ -28,10 +27,10 @@ public class Main {
             System.out.println("Import : results.csv");
             new ResultCsvImporter(em, collector).importer("results.csv");
 
-            System.out.println("Import : goalscorers.csv");
+             System.out.println("Import : goalscorers.csv");
             new GoalsScorersCsvImporter(em, collector).importer("goalscorers.csv");
 
-            System.out.println("Import : shootouts.csv");
+             System.out.println("Import : shootouts.csv");
             new ShootoutsCsvImporter(em, collector).importer("shootouts.csv");
 
             collector.getErreurs().forEach(em::persist);

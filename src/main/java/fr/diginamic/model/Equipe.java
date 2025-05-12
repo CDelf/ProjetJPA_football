@@ -99,6 +99,14 @@ public class Equipe {
     }
 
     /**
+     * Setter
+     * @param id id, utile pour les tests
+     */
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    /**
      * Getter
      * @return nom de l'équipe
      */

@@ -68,8 +68,6 @@ public class ShootoutsCsvImporter {
                 Equipe vainqueur = equipeService.getByNom(winner);
 
                 // Si match et vainqueur existants, y associer les tirs aux buts
-                if (match == null) System.out.println("Match introuvable pour ligne : " + ligne);
-                if (vainqueur == null) System.out.println("Vainqueur introuvable : " + winner);
                 if(CheckUtils.isNotNull(match) && CheckUtils.isNotNull(vainqueur)){
                    tirsButsService.enregistrerTirsButsSiNouveau(match, equipeCommence, vainqueur, ligne, fichier);
                }

@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class ButService {
 
-    private final ButDaoImpl butDao;
+    private ButDaoImpl butDao;
     private final ErreurCollector erreurCollector;
 
     /**
@@ -57,10 +57,18 @@ public class ButService {
                 }
             } else {
                 erreurCollector.log(fichier, ligne,
-                        "Paramètres invalides : match ou buteur null, ou minute négatif", "But");
+                        "Paramètres invalides : match ou buteur null, ou minutage négatif", "But");
             }
         } catch (Exception e) {
             erreurCollector.log(fichier, ligne, e.getMessage(), "But");
         }
+    }
+
+    /**
+     * Setter
+     * @param butDao butDao, utilisé pour les tests
+     */
+    public void setButDao(ButDaoImpl butDao) {
+        this.butDao = butDao;
     }
 }

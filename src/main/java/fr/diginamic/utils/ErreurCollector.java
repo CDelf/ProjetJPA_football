@@ -31,19 +31,4 @@ public final class ErreurCollector {
     public List<ErreurImport> getErreurs() {
         return erreurs;
     }
-
-    /**
-     * Nombre total d'erreurs collectées
-     * @return int
-     */
-    public int count() {
-        return erreurs.size();
-    }
-
-    /**
-     * Affiche les erreurs sur la console (optionnel)
-     */
-    public void printAll() {
-        erreurs.forEach(System.out::println);
-    }
 }
